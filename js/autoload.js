@@ -1,5 +1,5 @@
 // live2d_path 参数建议使用绝对路径
-const live2d_path = "https://www.ash-pro.top/live2d-Nancy/autoload.js";
+const live2d_path = "https://fastly.jsdelivr.net/gh/Nancy-Blog/live2d@1.0.2/";
 //const live2d_path = "/live2d-widget/";
 
 // 封装异步加载资源的方法
