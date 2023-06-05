@@ -28,15 +28,16 @@ if (document.body.clientWidth > 992) {
         $.fn.nekoScroll = function (option) {
             var defaultSetting = {
                 top: '0',
+                // 绳子宽度
                 scroWidth: 6 + 'px',
                 z_index: 9999,
-                zoom: 0.9,
+                zoom: 0.8,
                 borderRadius: 5 + 'px',
                 right: 60 + 'px',
-                // 这里可以换为你喜欢的图片，例如我就换为了雪人，但是要抠图
-                nekoImg: "https://bu.dusays.com/2022/07/20/62d812db74be9.png",
-                hoverMsg: "夏天啦~",
-                color: "#6f42c1",
+                nekoImg: "http://qimg.snightshadow.cn/mrfz.png",
+                hoverMsg: "别把我当成灾厄",
+                // 字体颜色
+                color: "#ff0000" ,
                 during: 500,
                 blog_body: "body",
             };
@@ -118,30 +119,30 @@ if (document.body.clientWidth > 992) {
     })(jQuery);
 
     $(document).ready(function () {
-        //部分自定义
+        // 部分自定义
         $("#myscoll").nekoScroll({
             bgcolor: 'rgb(0 0 0 / .5)', //背景颜色，没有绳子背景图片时有效
             borderRadius: '2em',
-            zoom: 0.9
-        }
-        );
-        //自定义（去掉以下注释，并注释掉其他的查看效果）
-        
-        $("#myscoll").nekoScroll({
-            nekoname:'neko1', //nekoname，相当于id
-            nekoImg:'img/猫咪.png', //neko的背景图片
-            scImg:"img/绳1.png", //绳子的背景图片
-            bgcolor:'#1e90ff', //背景颜色，没有绳子背景图片时有效
-            zoom:0.9, //绳子长度的缩放值
-            hoverMsg:'你好~喵', //鼠标浮动到neko上方的对话框信息
-            right:'100px', //距离页面右边的距离
-            fontFamily:'楷体', //对话框字体
-            fontSize:'14px', //对话框字体的大小
-            color:'#42d30a', //对话框字体颜色
-            scroWidth:'8px', //绳子的宽度
-            z_index:100, //不用解释了吧
-            during:1200, //从顶部到底部滑动的时长
+            zoom: 0.8
         });
-        
+
+        // 自定义（去掉以下注释，并注释掉其他的查看效果）
+
+        // $("#myscoll").nekoScroll({
+        //     nekoname: 'neko1', //nekoname，相当于id
+        //     nekoImg: '/img/mrfz.png', //neko的背景图片
+        //     scImg: "", //绳子的背景图片 img/绳1.png
+        //     bgcolor: '#ff0000', //背景颜色，没有绳子背景图片时有效 #1e90ff
+        //     zoom: 0.8, //绳子长度的缩放值
+        //     hoverMsg: '别把我当成灾厄', //鼠标浮动到neko上方的对话框信息
+        //     right: '100px', //距离页面右边的距离
+        //     fontFamily: '楷体', //对话框字体
+        //     fontSize: '7px', //对话框字体的大小
+        //     color: '#1e90ff', //对话框字体颜色
+        //     scroWidth: '8px', //绳子的宽度
+        //     z_index: 100, //不用解释了吧
+        //     during: 1200, //从顶部到底部滑动的时长
+        // });
+
     })
 }
