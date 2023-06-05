@@ -35,9 +35,9 @@ if (document.body.clientWidth > 992) {
                 borderRadius: 5 + 'px',
                 right: 60 + 'px',
                 nekoImg: "https://bu.dusays.com/2022/07/20/62d812db74be9.png",
-                hoverMsg: "别把我当成灾厄",
+                hoverMsg: "夏天噜~",
                 // 字体颜色
-                color: "#ff0000" ,
+                color: "#68dc3b" ,
                 during: 500,
                 blog_body: "body",
             };
