@@ -34,7 +34,7 @@ if (document.body.clientWidth > 992) {
                 zoom: 0.8,
                 borderRadius: 5 + 'px',
                 right: 60 + 'px',
-                nekoImg: "http://qimg.snightshadow.cn/mrfz.png",
+                nekoImg: "https://bu.dusays.com/2022/07/20/62d812db74be9.png",
                 hoverMsg: "别把我当成灾厄",
                 // 字体颜色
                 color: "#ff0000" ,
