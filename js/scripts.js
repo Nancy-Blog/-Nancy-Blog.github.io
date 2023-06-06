@@ -1,674 +1,1097 @@
-var sketchProc = function (processingInstance) {
-    with (processingInstance) {
-        size(600, 600);
-        frameRate(60);
-        smooth();
+var sketchProc = function(processingInstance) {
+  with (processingInstance) {
+    size(600, 600); 
+    frameRate(60);    
+    smooth();
 
-        var app;
+    var RoboCat = (function() {
+      RoboCat = function(args) {
+          this.x = args.x || 0;
+          this.y = args.y || 0;
+          this.timer = 0;
+          this.rot_timer = 0;
+          this.speed = 2;
+          this.shake = 0;
+          this.shakedown = 0.1;
+          this.colors = args.colors || {
+              light: color(242, 239, 242),
+              dark: color(33, 33, 33),
+              side: color(182, 101, 235),
+              accent: color(93, 227, 209),
+              accentRGB: [93, 227, 209]
+          };
+          this.body = {
+              x: 0,
+              y: 0,
+              angle: 0,
+              timer: 40,
+              xoff: 0
+          };
+          this.arms = {
+              right: {
+                  joint1: 0,
+                  joint2: 0,
+                  finger1: 0,
+                  finger2: 0,
+                  finger3: 0,
+                  joint1t: 0,
+                  joint2t: 0
+              },
+              left: {
+                  xoff: {
+                      value: 0,
+                      target: 0,
+                      timer: 0,
+                      delay: {
+                          value: 0,
+                          min: 30,
+                          max: 120
+                      }
+                  },
+                  yoff: {
+                      value: 0,
+                      target: 0,
+                      timer: 0,
+                      delay: {
+                          value: 0,
+                          min: 30,
+                          max: 120
+                      }
+                  }
+              }
+          };
+          this.legs = {
+              right: {
+                  x1: 423,
+                  y1: 393,
+                  x2: 400,
+                  y2: 400,
+                  x3: 416,
+                  y3: 502,
+                  l1: 67,
+                  l2: 60,
+                  vx3: 0,
+                  vy3: 0
+              },
+              left: {
+                  x1: 423,
+                  y1: 393,
+                  x2: 400,
+                  y2: 400,
+                  x3: 416,
+                  y3: 502,
+                  l1: 67,
+                  l2: 60,
+                  vx3: 0,
+                  vy3: 0
+              }
+          };
+          this.eye = {
+              show: true,
+              timer: 0,
+              delay: {
+                  value: 60,
+                  min: 60,
+                  max: 240
+              }
+          };
+          this.state = 0;
+          this.change = 0;
+          this.fire = {
+              state: 0, //0 = normal, 1 = heating up, 2 = blast
+              opacity: 0,
+              timer: 0,
+              fired: false,
+              bullets: [],
+              smokes: []
+          };
+      };
+      RoboCat.prototype = {
+          //Credit to JentGent for this function
+          joint: function(Ax, Ay, Bx, By, b, c, v) {
+              var t = atan2(By - Ay, Bx - Ax);
+              var a = dist(Ax, Ay, Bx, By);
+            
+              var f = acos(((Bx - Ax) * (Bx - Ax) + (By - Ay) * (By - Ay) + (c * c) - (b * b)) / (2 * a * b)) || 0;
+              var Cx = Ax + cos(t + f * v) * c || 0,
+                  Cy = Ay + sin(t + f * v) * c || 0;
 
-        var Dog = function () {
-            this.colors = {
-                skin: color(253, 209, 185),
-                eyesOuter: color(182, 96, 86),
-                eyesInner: color(255, 255, 255),
-                eyeBalls: color(0, 0, 0),
-                nose: color(0, 0, 0),
-                tounge: color(243, 116, 122),
-                toungeInner: color(240, 80, 96),
-                ears: color(136, 83, 76),
-                mouthOuter: color(136, 83, 76),
-                mouthInner: color(0, 0, 0),
-                teeth: color(255, 255, 255),
-                spots: color(243, 196, 173),
-                legsBehind: color(235, 190, 168)
-            };
-            this.timerFront = 0;
-            this.timerBack = 5;
-            this.sinFront = 0;
-            this.sinBack = 0;
-            this.speed = 12;
+              return {x: Cx, y: Cy};
+          },
+          draw: function() {
+              pushMatrix();
+                  translate(0, this.body.y);
 
-            this.update = function () {
-                this.timerFront++;
-                this.timerBack++;
-                this.sinFront = sin(radians(this.timerFront * this.speed));
-                this.sinBack = sin(radians(this.timerBack * this.speed));
-            };
-            this.drawHead = function () {
-                noStroke();
+                  {
+                  //back of ears
+                  noStroke();
+                  fill(this.colors.dark);
+                  beginShape();
+                      vertex(285, 118);
+                      bezierVertex(311, 130, 329, 153, 340, 182);
+                      vertex(285, 182);
+                  endShape(CLOSE);
+                  beginShape();
+                      vertex(371, 118);
+                      bezierVertex(398, 130, 415, 153, 430, 182);
+                      vertex(371, 182);
+                  endShape(CLOSE);
 
-                pushMatrix();
-                translate(355, 295);
-                rotate(radians(-25 + this.sinFront * 15));
-                translate(-355, -295);
+                  //front of ears
+                  noStroke();
+                  fill(this.colors.light);
+                  beginShape();
+                      vertex(242, 182);
+                      vertex(264, 126);
+                      bezierVertex(273, 112, 286, 112, 296, 126);
+                      vertex(317, 182);
+                  endShape(CLOSE);
+                  beginShape();
+                      vertex(330, 182);
+                      vertex(350, 129);
+                      bezierVertex(359, 112, 374, 112, 382, 127);
+                      vertex(404, 182);
+                  endShape(CLOSE);
 
-                //ear - behind
-                fill(this.colors.ears);
-                beginShape();
-                vertex(366, 247);
-                bezierVertex(377, 242, 390, 235, 394, 235);
-                bezierVertex(400, 235, 403, 238, 404, 244);
-                bezierVertex(405, 254, 404, 261, 398, 265);
-                endShape(CLOSE);
+                  //inner ears
+                  noFill();
+                  stroke(this.colors.accent);
+                  strokeWeight(2);
+                  beginShape();
+                      vertex(257, 182);
+                      vertex(269, 146);
+                      bezierVertex(276, 133, 284, 133, 291, 146);
+                      vertex(304, 182);
+                  endShape(CLOSE);
+                  beginShape();
+                      vertex(343, 182);
+                      vertex(356, 146);
+                      bezierVertex(364, 133, 370, 133, 377, 146);
+                      vertex(390, 182);
+                  endShape(CLOSE);
+                  } //ears
 
-                //head
-                fill(this.colors.skin);
-                strokeWeight(1);
-                stroke(this.colors.spots);
-                beginShape();
-                vertex(306, 293);
-                bezierVertex(311, 269, 324, 250, 351, 245);
-                bezierVertex(373, 242, 399, 256, 410, 271);
-                bezierVertex(421, 295, 414, 321, 401, 338);
-                bezierVertex(380, 357, 352, 359, 326, 350);
-                bezierVertex(311, 340, 304, 314, 306, 293);
-                endShape(CLOSE);
-                noStroke();
+                  {
+                  //handle on back of body
+                  noFill();
+                  stroke(this.colors.accent);
+                  strokeWeight(2);
+                  beginShape();
+                      vertex(444, 195);
+                      vertex(464, 200);
+                      bezierVertex(473, 200, 478, 206, 480, 213);
+                      vertex(495, 266);
+                      bezierVertex(497, 272, 498, 280, 494, 286);
+                      vertex(476, 305);
+                  endShape(CLOSE);
+                  } //handle on back of body
 
-                //ear - front
-                fill(this.colors.ears);
-                beginShape();
-                vertex(284, 262);
-                bezierVertex(296, 257, 310, 251, 321, 251);
-                bezierVertex(331, 250, 333, 251, 331, 257);
-                bezierVertex(323, 260, 314, 269, 309, 283);
-                bezierVertex(308, 288, 307, 292, 304, 292);
-                bezierVertex(294, 285, 286, 279, 282, 274);
-                bezierVertex(280, 269, 280, 266, 284, 262);
-                endShape(CLOSE);
+                  {
+                  //RIGHT LEG
+                  pushMatrix();
+                      translate(-145, 0); //move to the right (right leg)
+                      translate(0, -this.body.y);
 
-                //eye - outer right
-                fill(this.colors.eyesOuter);
-                beginShape();
-                vertex(332, 265);
-                bezierVertex(340, 264, 352, 263, 357, 274);
-                bezierVertex(360, 286, 360, 295, 352, 307);
-                bezierVertex(341, 316, 328, 318, 318, 313);
-                bezierVertex(310, 304, 310, 295, 312, 286);
-                bezierVertex(316, 276, 322, 270, 332, 265);
-                endShape(CLOSE);
+                      //lower leg on right
+                      noFill();
+                      strokeWeight(26);
+                      stroke(this.colors.dark);
+                      line(   this.legs.right.x2, 
+                              this.legs.right.y2, 
+                              this.legs.right.x3 + this.legs.right.vx3, 
+                              this.legs.right.y3 + this.legs.right.vy3);
+                      strokeWeight(1);
 
-                //eye - inner right
-                fill(this.colors.eyesInner);
-                beginShape();
-                vertex(334, 268);
-                bezierVertex(340, 266, 348, 269, 351, 274);
-                bezierVertex(356, 280, 356, 288, 354, 294);
-                bezierVertex(352, 300, 346, 303, 337, 304);
-                bezierVertex(328, 304, 322, 301, 318, 294);
-                bezierVertex(316, 282, 322, 274, 334, 268);
-                endShape(CLOSE);
+                      //TOP PART OF LEG
+                      pushMatrix();
+                          noFill();
+                          strokeWeight(26);
+                          stroke(this.colors.dark);
+                          line(   this.legs.right.x1, 
+                                  this.legs.right.y1 + this.body.y, 
+                                  this.legs.right.x2, 
+                                  this.legs.right.y2);
+                          strokeWeight(1);
+                      popMatrix();
 
-                //eye - outer left
-                fill(this.colors.eyesOuter);
-                beginShape();
-                vertex(390, 263);
-                bezierVertex(398, 262, 408, 268, 414, 276);
-                bezierVertex(417, 286, 415, 294, 410, 303);
-                bezierVertex(405, 307, 394, 308, 385, 302);
-                bezierVertex(379, 294, 376, 286, 377, 277);
-                bezierVertex(379, 271, 382, 266, 390, 263);
-                endShape(CLOSE);
+                      pushMatrix();
+                          translate(0, this.body.y);
 
-                //eye - inner left
-                fill(this.colors.eyesInner);
-                beginShape();
-                vertex(396, 264);
-                bezierVertex(402, 264, 409, 268, 414, 274);
-                bezierVertex(416, 282, 414, 290, 407, 295);
-                bezierVertex(397, 297, 390, 294, 385, 289);
-                bezierVertex(382, 284, 380, 278, 382, 273);
-                bezierVertex(384, 268, 388, 265, 396, 264);
-                endShape(CLOSE);
+                          translate(this.legs.right.x1, this.legs.right.y1);                    
+                          rotate(radians(50) + atan2((this.legs.right.y1 + this.body.y) - this.legs.right.y2, this.legs.right.x1 - this.legs.right.x2));
+                          translate(-this.legs.right.x1, -this.legs.right.y1);
 
-                fill(this.colors.eyeBalls);
-                ellipse(342 + this.sinBack * 2, 278 - this.sinBack * 2, 10, 10);
-                ellipse(400 + this.sinBack * 2, 273 - this.sinBack * 2, 10, 10);
+                          // top of leg on right
+                          noStroke();
+                          fill(this.colors.light);
+                          beginShape();
+                              vertex(375, 472);
+                              bezierVertex(333, 474, 311, 443, 331, 412);
+                              vertex(388, 366);
+                              bezierVertex(402, 359, 413, 359, 435, 363);
+                          endShape(CLOSE);
 
-                //area around mouth/nose
-                fill(this.colors.mouthOuter);
-                beginShape();
-                vertex(368, 282);
-                bezierVertex(376, 281, 385, 284, 393, 292);
-                bezierVertex(401, 302, 409, 314, 410, 326);
-                bezierVertex(407, 339, 397, 345, 385, 350);
-                bezierVertex(374, 354, 359, 356, 350, 354);
-                bezierVertex(340, 350, 334, 342, 333, 328);
-                bezierVertex(334, 316, 338, 307, 343, 298);
-                bezierVertex(349, 289, 358, 284, 368, 282);
-                endShape(CLOSE);
+                          //leg on right
+                          noStroke();
+                          fill(this.colors.side);
+                          beginShape();
+                              vertex(408, 367);
+                              bezierVertex(447, 348, 475, 386, 455, 417);
+                              vertex(388, 469);
+                              bezierVertex(357, 482, 329, 446, 347, 419);
+                          endShape(CLOSE);
 
-                //nose
-                fill(this.colors.nose);
-                beginShape();
-                vertex(368, 279);
-                bezierVertex(372, 278, 376, 280, 379, 282);
-                bezierVertex(378, 286, 377, 290, 374, 294);
-                bezierVertex(364, 294, 364, 292, 359, 289);
-                bezierVertex(359, 284, 363, 281, 368, 279);
-                endShape(CLOSE);
+                          //arc behind leg
+                          noFill();
+                          stroke(this.colors.dark);
+                          strokeWeight(2);
+                          bezier(412, 365, 449, 351, 459, 380, 462, 393);
 
-                //mouth
-                fill(this.colors.mouthInner);
-                beginShape();
-                vertex(374, 300);
-                bezierVertex(376, 300, 377, 302, 381, 307);
-                bezierVertex(385, 310, 389, 310, 394, 309);
-                bezierVertex(398, 310, 400, 315, 400, 322);
-                bezierVertex(395, 332, 387, 342, 378, 344);
-                bezierVertex(366, 348, 354, 345, 347, 342);
-                bezierVertex(341, 337, 338, 330, 338, 324);
-                bezierVertex(340, 316, 341, 312, 345, 309);
-                bezierVertex(352, 310, 353, 312, 358, 314);
-                bezierVertex(364, 315, 366, 313, 368, 310);
-                bezierVertex(370, 306, 370, 302, 374, 300);
-                endShape(CLOSE);
+                          //circle on leg on right
+                          noFill();
+                          stroke(this.colors.accent);
+                          strokeWeight(2);
+                          ellipse(376, 437, 25, 25);
+                      popMatrix();
 
-                //teeth
-                fill(this.colors.teeth);
-                triangle(391, 309, 386, 316, 386, 309);
-                triangle(363, 313, 360, 318, 356, 313);
+                      pushMatrix();
+                          translate(this.legs.right.x3 + this.legs.right.vx3, this.legs.right.y3 + this.legs.right.vy3);
+                          rotate(radians(sin(radians(this.timer * 2))) * -1);
+                          translate(-this.legs.right.x3, -this.legs.right.y3 + 10);
 
-                //creases on forehead
-                noFill();
-                stroke(this.colors.spots);
-                bezier(353, 251, 356, 252, 360, 253, 364, 251);
-                bezier(349, 255, 356, 258, 364, 258, 372, 255);
-                bezier(346, 259, 356, 263, 369, 264, 380, 259);
+                          //curve on top of foot on right
+                          noStroke();
+                          fill(this.colors.side);
+                          bezier(374, 495, 399, 476, 437, 476, 457, 495);
 
-                //tounge
-                noStroke();
-                fill(this.colors.tounge);
-                beginShape();
-                vertex(360, 329);
-                bezierVertex(366, 329, 373, 331, 379, 338);
-                bezierVertex(382, 346, 382, 354, 381, 361);
-                bezierVertex(
-                    379 - this.sinFront * 10, 371,
-                    378 - this.sinFront * 10, 378,
-                    374 - this.sinFront * 10, 383);
-                bezierVertex(
-                    369 - this.sinFront * 10, 384,
-                    362 - this.sinFront * 10, 380,
-                    358 - this.sinFront * 10, 374);
-                bezierVertex(
-                    354 - this.sinFront * 10, 367,
-                    351 - this.sinFront * 5, 353,
-                    349 - this.sinFront * 5, 343);
-                bezierVertex(345, 340, 344, 338, 344, 335);
-                bezierVertex(347, 332, 352, 330, 360, 329);
-                endShape(CLOSE);
+                          //front of foot on right
+                          noStroke();
+                          fill(this.colors.light);
+                          beginShape();
+                              vertex(362, 491);
+                              vertex(292, 491);
+                              bezierVertex(278, 495, 278, 514, 292, 518);
+                              vertex(362, 518);
+                          endShape(CLOSE);
 
-                //tounge - stripe
-                fill(this.colors.toungeInner);
-                beginShape();
-                vertex(364, 329);
-                bezierVertex(367, 341, 368, 351, 367, 357);
-                bezierVertex(364, 348, 362, 336, 358, 329);
-                endShape(CLOSE);
-                popMatrix();
-            };
-            this.drawBody = function () {
-                noStroke();
+                          //lines on front of foot on right
+                          noFill();
+                          stroke(this.colors.dark);
+                          strokeWeight(2);
+                          line(354, 495, 285, 495);
+                          line(352, 505, 283, 505);
+                          line(356, 514, 288, 514);
 
-                pushMatrix();
-                translate(20, -47);
+                          //foot on right
+                          noStroke();
+                          fill(this.colors.side);
+                          beginShape();
+                              vertex(362, 491);
+                              vertex(481, 492);
+                              bezierVertex(498, 493, 498, 518, 483, 518);
+                              vertex(362, 518);
+                              bezierVertex(344, 518, 344, 493, 362, 491);
+                          endShape(CLOSE);
 
-                //shadow
-                fill(0, 20);
-                ellipse(220, 505, 250 + this.sinFront * 15, 30);
+                          //line on top of foot on right
+                          noFill();
+                          stroke(this.colors.dark);
+                          strokeWeight(2);
+                          line(370, 492, 464, 492);
 
-                translate(200, 385);
-                rotate(radians(this.sinBack * 8));
-                translate(-200, -385);
-                translate(0, this.sinBack * 20);
+                          //line on foot on right
+                          noFill();
+                          strokeWeight(3);
+                          stroke(this.colors.accent);
+                          line(362, 505, 480, 505);
+                          strokeWeight(1);
 
-                //front leg - behind
-                pushMatrix();
-                translate(304, 411);
-                rotate(radians(this.sinBack * 45));
+                          //circles on line on foot on right
+                          noStroke();
+                          fill(this.colors.dark);
+                          ellipse(362, 505, 10, 10);
+                          ellipse(480, 505, 10, 10);
 
-                pushStyle();
-                noFill();
-                stroke(this.colors.legsBehind);
-                strokeWeight(25);
-                bezier(
-                    0, -5,
-                    -10, 15,
-                    -10, 45,
-                    0, 65);
-                popStyle();
+                          //thin line on foot on right
+                          noFill();
+                          stroke(this.colors.accent);
+                          strokeWeight(2);
+                          line(362, 505, 480, 505);
+                      popMatrix();
+                  popMatrix();
+                  } //right leg
 
-                translate(-304, -411);
-                popMatrix();
+                  {
+                  //back (behind) of body
+                  noStroke();
+                  fill(this.colors.dark);
+                  beginShape();
+                      vertex(459, 231);
+                      bezierVertex(471, 233, 475, 237, 478, 243);
+                      vertex(495, 301);
+                      bezierVertex(496, 307, 493, 316, 487, 324);
+                  endShape(CLOSE);
 
-                //back leg - behind
-                pushMatrix();
-                translate(132, 425);
-                rotate(radians(20 - this.sinBack * 45));
+                  //blue section under dark section under body
+                  noStroke();
+                  fill(this.colors.dark);
+                  beginShape();
+                      vertex(284, 376);
+                      bezierVertex(288, 399, 305, 411, 337, 408);
+                      vertex(410, 406);
+                      vertex(419, 376);
+                  endShape(CLOSE);
 
-                pushStyle();
-                noFill();
-                stroke(this.colors.legsBehind);
-                strokeWeight(25);
-                bezier(
-                    0, -5,
-                    10, 5,
-                    10, 35,
-                    0, 55);
-                popStyle();
+                  //dark section under body
+                  noStroke();
+                  fill(this.colors.dark);
+                  beginShape();
+                      vertex(240, 365);
+                      bezierVertex(240, 377, 242, 384, 255, 386);
+                      vertex(388, 384);
+                      bezierVertex(400, 382, 401, 374, 402, 365);
+                  endShape(CLOSE);
 
-                translate(-132, -425);
-                popMatrix();
+                  //antenna straight
+                  noFill();
+                  stroke(this.colors.dark);
+                  strokeWeight(2);
+                  line(420, 177, 420, 89);
+                  noStroke();
+                  fill(this.colors.side);
+                  ellipse(420, 89, 10, 10);
 
-                //tail
-                pushStyle();
-                noFill();
-                stroke(this.colors.skin);
+                  //antenna jagged
+                  noFill();
+                  stroke(this.colors.dark);
+                  strokeWeight(2);
+                  beginShape();
+                      vertex(430, 178);
+                      vertex(430, 134);
+                      vertex(425, 125);
+                      vertex(436, 121);
+                      vertex(430, 117);
+                      vertex(430, 109);
+                  endShape();
+                  } //body / antenna
+
+                  {
+                  //FIRING ARM
+                  pushMatrix();
+                      translate(this.arms.left.xoff.value, this.arms.left.yoff.value);
+
+                      if(this.shake > 0) {
+                          this.shake = lerp(this.shake, 0, this.shakedown);
+                          translate(round(random(-this.shake, this.shake)), round(random(-this.shake, this.shake)));
+                      }
+
+                      //arm
+                      noStroke();
+                      fill(this.colors.dark);
+                      beginShape();
+                          vertex(235, 228);
+                          vertex(155, 228);
+                          vertex(155, 350);
+                          vertex(235, 350);
+                      endShape(CLOSE);
+
+                      //lines on arm
+                      noFill();
+                      stroke(this.colors.accent);
+                      strokeWeight(2);
+                      line(162, 250, 234, 250);
+                      bezier(193, 250, 193, 263, 193, 278, 229, 287);
+
+                      //arm oval back
+                      noStroke();
+                      fill(this.colors.side);
+                      beginShape();
+                          vertex(115, 203);
+                          vertex(142, 203);
+                          bezierVertex(167, 206, 180, 222, 178, 236);
+                          vertex(178, 348);
+                          bezierVertex(173, 369, 160, 375, 143, 378);
+                          vertex(115, 378);
+                      endShape(CLOSE);
+
+                      //arm oval outer
+                      noStroke();
+                      fill(this.colors.light);
+                      beginShape();
+                          vertex(144, 228);
+                          vertex(144, 353);
+                          bezierVertex(137, 387, 88, 387, 80, 353);
+                          vertex(80, 228);
+                          bezierVertex(90, 195, 137, 195, 144, 228);
+                      endShape(CLOSE);
+
+                      //arm oval inner
+                      noStroke();
+                      fill(this.colors.dark);
+                      beginShape();
+                          vertex(131, 230);
+                          vertex(131, 349);
+                          bezierVertex(127, 373, 97, 373, 92, 349);
+                          vertex(92, 230);
+                          bezierVertex(97, 210, 127, 210, 131, 230);
+                      endShape(CLOSE);
+
+                      fill(this.colors.accent, this.fire.opacity);
+                      beginShape();
+                          vertex(131, 230);
+                          vertex(131, 349);
+                          bezierVertex(127, 373, 97, 373, 92, 349);
+                          vertex(92, 230);
+                          bezierVertex(97, 210, 127, 210, 131, 230);
+                      endShape(CLOSE);
+
+                      //handle on top of arm
+                      noFill();
+                      stroke(this.colors.dark);
+                      strokeWeight(2);
+                      line(120, 192, 139, 192);
+                      noFill();
+                      stroke(this.colors.accent);
+                      bezier(115, 205, 115, 199, 113, 194, 119, 192);
+                      bezier(139, 191, 143, 193, 144, 197, 144, 203);
+
+                      //handle on bottom of arm
+                      noFill();
+                      stroke(this.colors.dark);
+                      strokeWeight(2);
+                      line(120, 385, 139, 385);
+                      noFill();
+                      stroke(this.colors.accent);
+                      bezier(114, 376, 114, 381, 116, 385, 118, 385);
+                      bezier(138, 385, 142, 385, 144, 382, 144, 376);
+
+                      //line on side of arm top
+                      noFill();
+                      stroke(this.colors.accent);
+                      strokeWeight(2);
+                      beginShape();
+                          vertex(155, 207);
+                          vertex(155, 213);
+                          bezierVertex(156, 222, 161, 222, 165, 230);
+                          vertex(165, 262);
+                      endShape();
+                      ellipse(165, 262, 12, 12);
+
+                      //line on side of arm bottom
+                      noFill();
+                      stroke(this.colors.accent);
+                      strokeWeight(2);
+                      beginShape();
+                          vertex(162, 370);
+                          vertex(162, 350);
+                          bezierVertex(160, 341, 156, 342, 153, 330);
+                          vertex(153, 300);
+                      endShape();
+                      ellipse(153, 300, 12, 12);
+                  popMatrix();
+                  } //firing arm
+
+                  {
+                  //side of body
+                  noStroke();
+                  fill(this.colors.side);
+                  beginShape();
+                      vertex(401, 173);
+                      vertex(424, 173);
+                      bezierVertex(442, 173, 451, 183, 455, 199);
+                      vertex(496, 335);
+                      bezierVertex(499, 355, 486, 375, 456, 372);
+                      vertex(342, 372);
+                  endShape(CLOSE);
+
+                  //front of body
+                  noStroke();
+                  fill(this.colors.light);
+                  beginShape();
+                      vertex(401 + this.body.xoff, 173);
+                      vertex(342 + this.body.xoff, 372);
+                      vertex(212, 372);
+                      bezierVertex(186, 372, 174, 352, 180, 333);
+                      vertex(219, 197);
+                      bezierVertex(226, 177, 240, 171, 253, 173);
+                  endShape(CLOSE);
+
+                  //line on top of body
+                  noFill();
+                  stroke(this.colors.dark);
+                  strokeWeight(2);
+                  line(242, 172, 415, 172);
+
+                  pushMatrix();
+                      translate(this.body.xoff, 0);
+
+                      //face (circle)
+                      strokeWeight(3);
+                      stroke(this.colors.accent);
+                      fill(this.colors.dark);
+                      beginShape();
+                          vertex(294, 207);
+                          bezierVertex(335, 208, 359, 242, 351, 281);
+                          bezierVertex(341, 322, 302, 351, 262, 347);
+                          bezierVertex(229, 344, 203, 306, 215, 265);
+                          bezierVertex(227, 232, 257, 205, 294, 207);
+                      endShape(CLOSE);
+                      strokeWeight(1);
+
+                      //circles on body for arms
+                      noFill();
+                      stroke(this.colors.accent);
+                      strokeWeight(2);
+                      ellipse(420, 308, 55, 55);
+                      noStroke();
+                      fill(this.colors.light);
+                      ellipse(420, 308, 35, 35);
+
+                      //lines on side of body
+                      noFill();
+                      stroke(this.colors.dark);
+                      line(471, 287, 483, 328);
+                      line(466, 287, 473, 313);
+
+                      //lines on top of face
+                      noFill();
+                      stroke(this.colors.dark);
+                      strokeWeight(2);
+                      line(356, 180, 390, 180);
+                      line(369, 187, 386, 187);
+
+                      //lines on bottom/left of face
+                      noFill();
+                      stroke(this.colors.dark);
+                      strokeWeight(2);
+                      line(320, 350, 340, 350);
+                      rect(300, 355, 38, 10, 50);
+
+                      //line on top/left of face
+                      noFill();
+                      stroke(this.colors.accent);
+                      strokeWeight(2);
+                      beginShape();
+                          vertex(222 - this.body.xoff, 190);
+                          bezierVertex(228, 190, 234, 190, 240, 194);
+                          bezierVertex(244, 200, 250, 202, 259, 202);
+                      endShape();
+                      ellipse(259, 202, 10, 10);
+
+                      //line on bottom/left of face
+                      noFill();
+                      stroke(this.colors.accent);
+                      strokeWeight(2);
+                      beginShape();
+                          vertex(225, 372);
+                          bezierVertex(225, 366, 221, 362, 215, 362);
+                          bezierVertex(207, 359, 205, 353, 205, 343);
+                      endShape();
+                      ellipse(205, 343, 10, 10);
+                      noStroke();
+                      fill(this.colors.accent);
+                      ellipse(205, 331, 5, 5);
+
+                      //line on top/side of body
+                      noFill();
+                      stroke(this.colors.accent);
+                      strokeWeight(2);
+                      beginShape();
+                          vertex(424, 175);
+                          vertex(440, 241);
+                          bezierVertex(441, 245, 443, 248, 448, 248);
+                          bezierVertex(458, 248, 457, 256, 448, 255);
+                          vertex(427, 255);
+                      endShape();
+                      ellipse(427, 255, 15, 15);
+
+                      if(this.eye.show) {
+                          //eyes open
+                          stroke(this.colors.accent);
+                          line(253, 268, 266, 272);
+                          line(309, 268, 293, 272);
+                          noStroke();
+                          fill(this.colors.accent);
+                          ellipse(260, 278, 15, 16);
+                          ellipse(299, 278, 15, 16);
+                      }
+                      else {
+                          //eyes closed
+                          noFill();
+                          stroke(this.colors.accent);
+                          strokeWeight(3);
+                          beginShape();
+                              vertex(258, 273);
+                              vertex(265, 281);
+                              vertex(252, 282);
+                          endShape();
+                          beginShape();
+                              vertex(304, 273);
+                              vertex(294, 281);
+                              vertex(308, 282);
+                          endShape();
+                      }
+
+                      //mouth
+                      noFill();
+                      stroke(this.colors.accent);
+                      beginShape();
+                          vertex(285, 283);
+                          bezierVertex(283, 292, 275, 292, 274, 283);
+                      endShape();
+
+                      //stripes on right
+                      noFill();
+                      stroke(this.colors.accent);
+                      strokeWeight(2);
+                      line(307, 293, 318, 300);
+                      line(310, 290, 324, 298);
+                      line(313, 286, 325, 291);
+
+                      //stripes on left
+                      noFill();
+                      stroke(this.colors.accent);
+                      strokeWeight(2);
+                      line(248, 295, 235, 300);
+                      line(246, 290, 230, 297);
+                      line(245, 284, 232, 291);
+                  popMatrix();
+                  } //body / face
+
+                  {
+                  //LEFT LEG
+                  pushMatrix();
+                      translate(0, -this.body.y);
+
+                      pushMatrix();
+                          //lower leg on right
+                          noFill();
+                          strokeWeight(26);
+                          stroke(this.colors.dark);
+                          line(   this.legs.left.x2, 
+                                  this.legs.left.y2, 
+                                  this.legs.left.x3 + this.legs.left.vx3, 
+                                  this.legs.left.y3 + this.legs.left.vy3);
+                          strokeWeight(1);
+
+                          //TOP PART OF LEG
+                          noFill();
+                          strokeWeight(26);
+                          stroke(this.colors.dark);
+                          line(   this.legs.left.x1, 
+                                  this.legs.left.y1 + this.body.y, 
+                                  this.legs.left.x2, 
+                                  this.legs.left.y2);
+                          strokeWeight(1);
+
+                          pushMatrix();
+                              translate(0, this.body.y);
+
+                              translate(this.legs.left.x1, this.legs.left.y1);
+                              rotate(radians(50) + atan2((this.legs.left.y1 + this.body.y) - this.legs.left.y2, this.legs.left.x1 - this.legs.left.x2));
+                              translate(-this.legs.left.x1, -this.legs.left.y1);
+
+                              //top of leg on right
+                              noStroke();
+                              fill(this.colors.light);
+                              beginShape();
+                                  vertex(375, 472);
+                                  bezierVertex(333, 474, 311, 443, 331, 412);
+                                  vertex(388, 366);
+                                  bezierVertex(402, 359, 413, 359, 435, 363);
+                              endShape(CLOSE);
+
+                              //leg on right
+                              noStroke();
+                              fill(this.colors.side);
+                              beginShape();
+                                  vertex(408, 367);
+                                  bezierVertex(447, 348, 475, 386, 455, 417);
+                                  vertex(388, 469);
+                                  bezierVertex(357, 482, 329, 446, 347, 419);
+                              endShape(CLOSE);
+
+                              //arc behind leg
+                              noFill();
+                              stroke(this.colors.dark);
+                              strokeWeight(2);
+                              bezier(412, 365, 449, 351, 459, 380, 462, 393);
+
+                              //circle on leg on right
+                              noFill();
+                              stroke(this.colors.accent);
+                              strokeWeight(2);
+                              ellipse(376, 437, 25, 25);
+                          popMatrix();
+
+                          pushMatrix();
+                              translate(this.legs.left.x3 + this.legs.left.vx3, this.legs.left.y3 + this.legs.left.vy3);
+                              rotate(radians(sin(radians(this.timer * 2))) * 1);
+                              translate(-this.legs.left.x3, -this.legs.left.y3 + 10);
+
+                              //curve on top of foot on right
+                              noStroke();
+                              fill(this.colors.side);
+                              bezier(374, 495, 399, 476, 437, 476, 457, 495);
+
+                              //front of foot on right
+                              noStroke();
+                              fill(this.colors.light);
+                              beginShape();
+                                  vertex(362, 491);
+                                  vertex(292, 491);
+                                  bezierVertex(278, 495, 278, 514, 292, 518);
+                                  vertex(362, 518);
+                              endShape(CLOSE);
+
+                              //lines on front of foot on right
+                              noFill();
+                              stroke(this.colors.dark);
+                              strokeWeight(2);
+                              line(354, 495, 285, 495);
+                              line(352, 505, 283, 505);
+                              line(356, 514, 288, 514);
+
+                              //foot on right
+                              noStroke();
+                              fill(this.colors.side);
+                              beginShape();
+                                  vertex(362, 491);
+                                  vertex(481, 492);
+                                  bezierVertex(498, 493, 498, 518, 483, 518);
+                                  vertex(362, 518);
+                                  bezierVertex(344, 518, 344, 493, 362, 491);
+                              endShape(CLOSE);
+
+                              //line on top of foot on right
+                              noFill();
+                              stroke(this.colors.dark);
+                              strokeWeight(2);
+                              line(370, 492, 464, 492);
+
+                              //line on foot on right
+                              noFill();
+                              strokeWeight(3);
+                              stroke(this.colors.accent);
+                              line(362, 505, 480, 505);
+                              strokeWeight(1);
+
+                              //circles on line on foot on right
+                              noStroke();
+                              fill(this.colors.dark);
+                              ellipse(362, 505, 10, 10);
+                              ellipse(480, 505, 10, 10);
+
+                              //thin line on foot on right
+                              noFill();
+                              stroke(this.colors.accent);
+                              strokeWeight(2);
+                              line(362, 505, 480, 505);
+                          popMatrix();
+                      popMatrix();
+                  popMatrix();
+                  } //left leg
+
+                  {
+                  //ARM
+                  pushMatrix();
+                      translate(420 + this.body.xoff, 308);
+                      rotate(radians(this.arms.right.joint1));
+                      translate(-420, -308);
+
+                      //upper arm //need to add accent
+                      noFill();
+                      stroke(this.colors.dark);
+                      strokeWeight(22);
+                      line(420, 308, 432, 423);
+                      strokeWeight(2);
+                      stroke(this.colors.accent);
+                      line(420, 308, 432, 423);
+                      strokeWeight(1);
+
+                      //circle for elbow joint
+                      // noStroke();
+                      stroke(this.colors.accent);
+                      fill(this.colors.side);
+                      ellipse(432, 423, 60, 60);
+
+                      pushMatrix();
+                          translate(432, 423);
+                          rotate(radians(this.arms.right.joint2));
+                          translate(-432, -423);
+
+                          //lower arm //need to add accent
+                          noFill();
+                          stroke(this.colors.dark);
+                          strokeWeight(22);
+                          line(432, 423, 345, 362);
+                          strokeWeight(2);
+                          stroke(this.colors.accent);
+                          line(432, 423, 345, 362);
+                          strokeWeight(1);
+
+                          //finger behind
+                          pushMatrix();
+                              translate(328, 373);
+                              rotate(radians(this.arms.right.finger1));
+                              translate(-328, -373);
+
+                              noFill();
+                              stroke(this.colors.dark);
+                              strokeWeight(16);
+                              beginShape();
+                                  vertex(328, 373);
+                                  vertex(323, 388);
+                                  vertex(308, 394);
+                              endShape();
+                              strokeWeight(1);
+                          popMatrix();
+
+                          //circle for hand
+                          noStroke();
+                          fill(this.colors.light);
+                          ellipse(345, 362, 56, 56);
+
+                          //fingers in front
+                          pushMatrix();
+                              translate(341, 341);
+                              rotate(radians(this.arms.right.finger2));
+                              translate(-341, -341);
+
+                              noFill();
+                              stroke(this.colors.dark);
+                              strokeWeight(16);
+                              beginShape();
+                                  vertex(341, 341);
+                                  vertex(336, 320);
+                                  vertex(320, 311);
+                              endShape();
+                              strokeWeight(1);
+                          popMatrix();
+                          pushMatrix();
+                              translate(356, 372);
+                              rotate(radians(this.arms.right.finger3));
+                              translate(-356, -372);
+
+                              noFill();
+                              stroke(this.colors.dark);
+                              strokeWeight(16);
+                              beginShape();
+                                  vertex(356, 372);
+                                  vertex(363, 389);
+                                  vertex(350, 405);
+                              endShape();
+                              strokeWeight(1);
+                          popMatrix();
+                      popMatrix();
+                  popMatrix();
+                  } //right arm
+              popMatrix();
+
+              noFill();
+              strokeWeight(8);
+              for(var i = this.fire.smokes.length - 1; i >= 0; i--) {
+                  var smoke = this.fire.smokes[i];
+
+                  stroke(smoke.color, smoke.opacity);
+                  ellipse(smoke.x, smoke.y, smoke.diameter, smoke.diameter);
+
+                  smoke.x+= smoke.vx;
+                  smoke.y+= smoke.vy;
+                  smoke.diameter+= 0.2;
+                  smoke.opacity = constrain(smoke.opacity - 1, 0, 255);
+
+                  if(smoke.opacity === 0) {
+                      this.fire.smokes.splice(i, 1);
+                  }
+              }
+
+              noStroke();
+              fill(this.colors.dark);
+              for(var i = this.fire.bullets.length - 1; i >= 0; i--) {
+                  var bullet = this.fire.bullets[i];
+
+                  ellipse(bullet.x, bullet.y, bullet.diameter, bullet.diameter);
+
+                  bullet.x-= 15;
+
+                  if(bullet.x + bullet.diameter < 0) {
+                      this.fire.bullets.splice(i, 1);
+                  }
+              }
+          },
+          update: function() {
+              this.timer++;
+              this.body.timer++;
+
+              this.body.xoff = constrain(sin(radians(this.timer * this.speed * 0.5)) * 10, 0, 7);
+
+              this.body.y = constrain(cos(radians(this.body.timer * this.speed * 2)) * 20, -20, 0);
+
+              this.legs.right.vx3 = constrain(sin(radians(this.timer * this.speed)) * 70, -50, 20);
+              this.legs.right.vy3 = constrain(cos(radians(this.timer * this.speed)) * 20, -20, 0);
+
+              this.legs.left.vx3 = constrain(-sin(radians((this.timer - 180) * this.speed)) * 70, -50, 20);
+              this.legs.left.vy3 = constrain(-cos(radians((this.timer - 180) * this.speed)) * 20, -20, 0);
+
+              var legRight = this.joint(
+                  this.legs.right.x3 + this.legs.right.vx3, this.legs.right.y3 + this.legs.right.vy3, 
+                  this.legs.right.x1, this.legs.right.y1 + this.body.y, 
+                  this.legs.right.l1, this.legs.right.l2, -1);
+
+              this.legs.right.x2 = legRight.x;
+              this.legs.right.y2 = legRight.y;
+
+              var legLeft = this.joint(
+                  this.legs.left.x3 + this.legs.left.vx3, this.legs.left.y3 + this.legs.left.vy3, 
+                  this.legs.left.x1, this.legs.left.y1 + this.body.y, 
+                  this.legs.left.l1, this.legs.left.l2, -1);
+
+              this.legs.left.x2 = legLeft.x;
+              this.legs.left.y2 = legLeft.y;
+
+              //right arm
+              if(round(this.arms.right.joint1) === round(this.arms.right.joint1t)) {
+                  this.arms.right.joint1t = random(-50, 50);
+              }
+              this.arms.right.joint1 = lerp(this.arms.right.joint1, this.arms.right.joint1t, 0.04);
+
+              if(round(this.arms.right.joint2) === round(this.arms.right.joint2t)) {
+                  this.arms.right.joint2t = random(-50, 30);
+              }
+              this.arms.right.joint2 = lerp(this.arms.right.joint2, this.arms.right.joint2t, 0.04);
+
+              this.arms.right.finger1 = constrain(sin(radians(this.timer * this.speed * 1.5)) * 155, 0, 65);
+              this.arms.right.finger2 = -this.arms.right.finger1;
+              this.arms.right.finger3 = this.arms.right.finger1;
+
+              switch(this.fire.state) {
+                  case 0:
+                      this.fire.timer++;
+                      if(this.fire.timer === 30) {
+                          this.arms.left.xoff.delay.value = 30;
+                      }
+                      else if(this.fire.timer === 300) {
+                          this.fire.state++;
+                          this.fire.timer = 0;
+                      }
+                      break;
+                  case 1:
+                      this.fire.opacity = constrain(this.fire.opacity + 2, 0, 255);
+
+                      if(this.fire.opacity === 255 && this.fire.timer++ === 60) {
+                          this.arms.left.xoff.delay.value = 240;
+                          this.arms.left.xoff.target = 60;
+                          this.fire.fired = true;
+                          this.fire.timer = 0;
+                          this.fire.state++;
+                          this.shake = 10;
+
+                          for(var i = 0; i < 4; i++) {
+                              this.fire.bullets.push({
+                                  x: 120 + this.arms.left.xoff.value,
+                                  y: 240 + this.body.y + this.arms.left.yoff.value + (i * 35),
+                                  diameter: 30
+                              });
+                              for(var j = 0; j < 3; j++) {
+                                  this.fire.smokes.push({
+                                      x: 120 + this.arms.left.xoff.value,
+                                      y: 240 + this.body.y + this.arms.left.yoff.value + (i * 35),
+                                      diameter: random(25, 35),
+                                      vx: random(-0.2, 0.2),
+                                      vy: random(-0.2, 0.2),
+                                      opacity: random(70, 100),
+                                      color: color(
+                                          random(this.colors.accentRGB[0] - 10, this.colors.accentRGB[0] + 10),
+                                          random(this.colors.accentRGB[1] - 10, this.colors.accentRGB[1] + 10),
+                                          random(this.colors.accentRGB[2] - 10, this.colors.accentRGB[2] + 10))
+                                  });
+                              }
+                          }
+                      }
+                      break;
+                  case 2:
+                      this.fire.opacity = constrain(this.fire.opacity -10, 0, 255);
+                      if(this.fire.opacity === 0) {
+                          this.arms.left.xoff.timer = 0;
+                          this.fire.state = 0;
+                          this.fire.timer = 0;
+                          this.fire.fired = false;
+                      }
+                      break;
+              }
+
+              //firing arm (left)
+              var leftArm = this.arms.left;
+              if(leftArm.xoff.timer++ === leftArm.xoff.delay.value) {
+                  leftArm.xoff.timer = 0;
+                  leftArm.xoff.delay.value = random(leftArm.xoff.delay.min, leftArm.xoff.delay.max) | 0;
+                  leftArm.xoff.target = random(30) | 0;
+              }
+              leftArm.xoff.value = lerp(leftArm.xoff.value, leftArm.xoff.target, (this.fire.fired === true ? 0.5 : 0.05));
+
+              if(leftArm.yoff.timer++ === leftArm.yoff.delay.value) {
+                  leftArm.yoff.timer = 0;
+                  leftArm.yoff.delay.value = random(leftArm.yoff.delay.min, leftArm.yoff.delay.max) | 0;
+                  leftArm.yoff.target = random(-10, 30) | 0;
+              }
+              leftArm.yoff.value = lerp(leftArm.yoff.value, leftArm.yoff.target, 0.05);
+
+              //blinking eyes
+              if(this.eye.show) {
+                  if(this.eye.timer++ === this.eye.delay.value) {
+                      this.eye.timer = 0;
+                      this.eye.delay.value = 10;
+                      this.eye.show = false;
+                  }
+              }
+              else {
+                  if(this.eye.timer++ === this.eye.delay.value) {
+                      this.eye.timer = 0;
+                      this.eye.show = true;
+                      this.eye.delay.value = random(this.eye.delay.min, this.eye.delay.max) | 0;
+                  }
+              }
+          },
+          run: function() {
+              this.draw();
+              this.update();
+          }
+      };
+      return RoboCat;
+    })();
+
+    var App = (function() {
+        App = function() {
+            this.robocat = new RoboCat({});
+        };
+        App.prototype = {
+            draw: function() {
+                background(85, 48, 171);
+
+                //ground
+                stroke(40);
                 strokeWeight(10);
-                bezier(
-                    115, 372,
-                    102, 364,
-                    93, 358,
-                    86 + this.sinFront * 5, 347);
+                line(61, 534, 537, 534);
                 strokeWeight(1);
-                popStyle();
 
-                //body
-                noStroke();
-                fill(this.colors.skin);
-                beginShape();
-                vertex(231, 338);
-                bezierVertex(250, 339, 280, 339, 303, 345);
-                bezierVertex(320, 352, 333, 374, 332, 390);
-                bezierVertex(330, 409, 322, 426, 306, 434);
-                bezierVertex(288, 440, 266, 440, 248, 436);
-                bezierVertex(219, 435, 200, 436, 174, 440);
-                bezierVertex(148, 440, 130, 442, 112, 430);
-                bezierVertex(99, 416, 94, 393, 100, 372);
-                bezierVertex(113, 353, 136, 344, 168, 340);
-                bezierVertex(198, 337, 216, 338, 231, 338);
-                endShape(CLOSE);
-
-                //front leg - close
-                pushMatrix();
-                translate(260, 410);
-                rotate(radians(-20 + this.sinFront * 45));
-
-                pushStyle();
-                noFill();
-                stroke(this.colors.skin);
-                strokeWeight(25);
-                bezier(
-                    0, 0,
-                    -10, 20,
-                    -10, 50,
-                    0, 70);
-                popStyle();
-
-                translate(-260, -410);
-                popMatrix();
-
-                //back leg - close
-                pushMatrix();
-                translate(150, 420);
-                rotate(radians(20 - this.sinFront * 45));
-
-                pushStyle();
-                noFill();
-                stroke(this.colors.skin);
-                strokeWeight(25);
-                bezier(
-                    0, -10,
-                    10, 10,
-                    10, 40,
-                    0, 60);
-                popStyle();
-
-                translate(-150, -420);
-                popMatrix();
-
-                //spots
-                fill(this.colors.spots);
-                beginShape();
-                vertex(226, 376);
-                bezierVertex(232, 373, 237, 374, 238, 380);
-                bezierVertex(235, 386, 231, 390, 228, 390);
-                bezierVertex(222, 387, 220, 383, 225, 375);
-                endShape(CLOSE);
-                beginShape();
-                vertex(248, 385);
-                bezierVertex(250, 389, 250, 393, 248, 397);
-                bezierVertex(244, 397, 240, 392, 240, 388);
-                bezierVertex(242, 385, 246, 385, 248, 385);
-                endShape(CLOSE);
-                beginShape();
-                vertex(150, 390);
-                bezierVertex(154, 392, 157, 398, 155, 402);
-                bezierVertex(152, 405, 147, 405, 142, 399);
-                bezierVertex(143, 393, 146, 391, 150, 390);
-                endShape(CLOSE);
-                beginShape();
-                vertex(137, 406);
-                bezierVertex(140, 407, 141, 410, 141, 414);
-                bezierVertex(138, 416, 134, 416, 132, 412);
-                bezierVertex(132, 408, 134, 407, 137, 406);
-                endShape(CLOSE);
-                beginShape();
-                vertex(124, 374);
-                bezierVertex(132, 378, 136, 386, 136, 394);
-                bezierVertex(133, 402, 128, 406, 122, 407);
-                bezierVertex(115, 406, 111, 400, 108, 395);
-                bezierVertex(108, 388, 109, 384, 112, 378);
-                bezierVertex(117, 376, 120, 375, 124, 374);
-                endShape(CLOSE);
-
-                pushMatrix();
-                translate(-60, 40);
-                this.drawHead();
-                popMatrix();
-
-                popMatrix();
-            };
-            this.draw = function () {
-                this.drawBody();
-            };
-            this.run = function () {
-                this.draw();
-                this.update();
-            };
-        };
-
-        var Butterfly = function () {
-            this.timer = 0;
-            this.sin = 0;
-            this.bsin = 0;
-            this.speed = 8;
-            this.wingSpeed = 6;
-            this.wing = undefined;
-            this.colors = {
-                pink: color(236, 85, 96),
-                yellow: color(255, 215, 122)
-            };
-
-            this.update = function () {
-                this.timer++;
-
-                this.sin = sin(radians(this.timer * this.speed));
-                this.bsin = sin(radians(this.timer * this.wingSpeed));
-            };
-            this.getWing = function () {
-                background(0, 0);
-                noStroke();
-
-                pushMatrix();
-                translate(-228, -754);
-                scale(2);
-                fill(this.colors.pink);
-                beginShape();
-                vertex(228, 454);
-                bezierVertex(235, 444, 246, 437, 255, 442);
-                bezierVertex(260, 448, 256, 461, 244, 471);
-                bezierVertex(250, 478, 248, 486, 242, 490);
-                bezierVertex(237, 492, 232, 490, 228, 484);
-                endShape(CLOSE);
-                popMatrix();
-
-                return get(225, 124, 62, 105);
-            };
-            this.wing = this.getWing();
-            this.draw = function () {
-
-                pushMatrix();
-                translate(450, 130 + this.sin * 20);
-                scale(0.7);
-                rotate(radians(-40));
-                scale(abs(this.bsin), 1);
-
-                //wings
-                image(this.wing, -2, 0);
-                scale(-1, 1);
-                image(this.wing, -2, 0);
-
-                //body
-                noFill();
-                stroke(0);
-                strokeWeight(3);
-                bezier(
-                    0, 30,
-                    2, 50,
-                    1, 70,
-                    0, 85);
-
-                //feelers
-                strokeWeight(1);
-                bezier(
-                    0, 30,
-                    2, 20,
-                    3, 10,
-                    2, 0);
-                bezier(
-                    0, 30,
-                    -2, 20,
-                    -3, 10,
-                    -2, -3);
-
-                //ends of feelers
-                strokeWeight(3);
-                point(2, 0);
-                point(-2, -3);
-
-                //dots on wings
-                strokeWeight(1);
-                noStroke();
-                fill(this.colors.yellow);
-                ellipse(-40, 25, 22, 22);
-                ellipse(40, 25, 22, 22);
-                ellipse(-22, 85, 17, 17);
-                ellipse(22, 85, 17, 17);
-
-                popMatrix();
-            };
-            this.fly = function () {
-                this.draw();
-                this.update();
-            };
-        };
-
-        var App = function () {
-            this.page = "load";
-            this.spots = [];
-            this.speed = 15;
-            this.clouds = [];
-            this.images = undefined;
-            this.imageIndex = 0;
-            this.loaded = false;
-            this.dog = new Dog();
-            this.butterfly = new Butterfly();
-
-            this.init = function () {
-                for (var i = 0; i < 5; i++) {
-                    var w = random(100, 150);
-                    this.spots.push({
-                        x: random(width),
-                        y: random(430, 600),
-                        w: w,
-                        h: w * 0.2
-                    });
-                }
-            };
-            this.init();
-            this.setup = function () {
-                this.images = {
-                    cloud1: function () {
-                        background(0, 0);
-
-                        pushMatrix();
-                        scale(1.2);
-                        noStroke();
-                        fill(235, 232, 235);
-                        beginShape();
-                        vertex(290, 184);
-                        bezierVertex(293, 180, 296, 177, 306, 179);
-                        bezierVertex(310, 169, 314, 166, 322, 169);
-                        bezierVertex(324, 160, 327, 151, 330, 150);
-                        bezierVertex(337, 145, 347, 148, 355, 165);
-                        bezierVertex(365, 163, 377, 165, 383, 176);
-                        bezierVertex(388, 176, 392, 177, 396, 184);
-                        endShape(CLOSE);
-                        popMatrix();
-
-                        return get(345, 173, 132, 52);
-                    },
-                    cloud2: function () {
-                        background(0, 0);
-
-                        pushMatrix();
-                        scale(2);
-                        noStroke();
-                        fill(240, 237, 240);
-                        beginShape();
-                        vertex(44, 177);
-                        bezierVertex(46, 172, 52, 169, 60, 171);
-                        bezierVertex(61, 165, 65, 156, 71, 154);
-                        bezierVertex(77, 152, 82, 157, 84, 162);
-                        bezierVertex(88, 161, 94, 162, 98, 168);
-                        bezierVertex(103, 169, 109, 170, 113, 177);
-                        endShape(CLOSE);
-                        popMatrix();
-
-                        return get(84, 304, 144, 53);
-                    },
-                    sky: function () {
-                        background(0, 0);
-
-                        noStroke();
-                        for (var i = 0; i <= 400; i++) {
-                            fill(lerpColor(color(9, 152, 184), color(55, 191, 212), i / 400));
-                            rect(0, i, width, i);
-                        }
-
-                        return get(0, 0, width, 400);
-                    },
-                    ground: function () {
-                        background(0, 0);
-
-                        noStroke();
-                        for (var i = 0; i <= 200; i++) {
-                            fill(lerpColor(color(93, 138, 107), color(113, 166, 128), i / 200));
-                            rect(0, i, width, i);
-                        }
-
-                        return get(0, 0, width, 200);
-                    }
-                };
-
-                //add clouds
-                for (var i = 0; i < 5; i++) {
-                    this.clouds.push({
-                        x: random(i * 120, i * 120 + 50),
-                        y: random(50, 300),
-                        scale: random(0.7, 1),
-                        type: random() < 0.5 ? 1 : 2,
-                        speed: random(5, 6)
-                    });
-                }
-            };
-            this.setup();
-            this.load = function (s) {
-                var obj = Object.keys(this.images);
-                this.images[obj[this.imageIndex]] = this.images[obj[this.imageIndex]]();
-                this.imageIndex++;
-
-                background(74, 168, 231);
-                pushStyle();
-                fill(240, 200);
-                textAlign(CENTER, CENTER);
-                textSize(40);
-                text('LOADING', 300, 300);
-                noFill();
-                stroke(240, 150);
-                strokeWeight(10);
-                arc(300, 300, 300, 300, 0, map(this.imageIndex / obj.length, 0, 1, 0, 360));
-                strokeWeight(1);
-                popStyle();
-
-                if (this.imageIndex < obj.length) {
-                    this.loaded = false;
-                }
-                else {
-                    this.loaded = true;
-                    this.page = s;
-                }
-            };
-            this.runClouds = function () {
-                for (var i = 0; i < this.clouds.length; i++) {
-                    var cloud = this.clouds[i];
-                    var img = cloud.type === 1 ? this.images.cloud1 : this.images.cloud2;
-                    image(img, cloud.x, cloud.y, img.width * cloud.scale, img.height * cloud.scale);
-
-                    cloud.x -= cloud.speed;
-
-                    if (cloud.x < -img.width) {
-                        cloud.x = random(width * 1.1, width * 1.3);
-                        cloud.y = random(50, 300);
-                        cloud.scale = random(0.7, 1);
-                        cloud.type = random() < 0.5 ? 1 : 2;
-                        cloud.speed = random(5, 6);
-                    }
-                }
-            };
-            this.update = function () {
-                for (var i = 0; i < this.spots.length; i++) {
-                    var spot = this.spots[i];
-
-                    if (spot.x + spot.w < 0) {
-                        spot.x = random(width + 100, width + 200);
-                        spot.y = random(430, 600);
-                        spot.w = random(100, 150);
-                        spot.h = spot.w * 0.2;
-                    }
-                    else {
-                        spot.x -= this.speed;
-                    }
-                }
-            };
-            this.draw = function () {
-                image(this.images.sky, 0, 0);
-                image(this.images.ground, 0, 400);
-                noStroke();
-                fill(97, 135, 97);
-                for (var i = 0; i < this.spots.length; i++) {
-                    var spot = this.spots[i];
-                    ellipse(spot.x, spot.y, spot.w, spot.h);
-                }
-            };
-            this.go = function () {
-                this.draw();
-                this.runClouds();
-                this.update();
-                this.dog.run();
-                this.butterfly.fly();
-            };
-        };
-
-        app = new App();
-
-        draw = function () {
-            background(74, 168, 231);
-
-            switch (app.page) {
-                case "load":
-                    app.load("go");
-                    break;
-                case "go":
-                    app.go();
-                    break;
+                this.robocat.run();
+            },
+            run: function() {
+              this.draw();
             }
         };
+        return App;
+    })();
 
-    }
+    var app = new App();
+
+    draw = function() {
+        app.run();
+    };
+    
+  }
 }
 
-var canvas = document.getElementById("canvas");
+var canvas = document.getElementById("canvas"); 
 var processingInstance = new Processing(canvas, sketchProc);
