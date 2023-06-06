@@ -180,8 +180,8 @@ document.addEventListener('pjax:send', () => {
 <span>那年今日</span>
 </div>
 <div id="history-baidu" style="height: 100px;overflow: hidden"> <!-- 挂载器 -->
-<div class="history_swiper-container" id="history-container" style="width: 100%;height: 100%">
-<div class="swiper-wrapper" id="history_container_wrapper" style="height:20px"></div>
+<div class="history_swiper-container" id="history-container" style="width: 100%;height: 100px">
+<div class="swiper-wrapper" id="history_container_wrapper" style="height:100px"></div>
 </div>
 </div>
 </div>
@@ -189,14 +189,10 @@ document.addEventListener('pjax:send', () => {
 </div>
 </div>
 <div desc="我是墙" id="recent-posts1">
-<!-- id=>type  recent-posts=>name    -->
-<div desc="我是画框">
-<div desc="我是纸">
 <canvas id="canvas"></canvas>
 <script src="https://www.ash-pro.top/js/processing.min.js"></script>
 <script src="https://www.ash-pro.top/js/scripts.js"></script>
 </div>
-</div></div>
 <!-- hexo injector body_end start --><script data-pjax>function history_calendar_injector_config(){
                 var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
                 var item_html = '<div class="card-widget card-history"><div class="card-content"><div class="item-headline"><i class="fas fa-clock fa-spin"></i><span>那年今日</span></div><div id="history-baidu" style="height: 100px;overflow: hidden"><div class="history_swiper-container" id="history-container" style="width: 100%;height: 100%"><div class="swiper-wrapper" id="history_container_wrapper" style="height:20px"></div></div></div></div>';

@@ -1,7 +1,10 @@
+* {
+  overflow: auto;
+}
 #recent-posts1 {
     background: #0998B8;
-    width: auto;
-    height: auto;
+    width: 285px;
+    height: 285px;
     display: flex;
     justify-content: center;
     align-items: center;
