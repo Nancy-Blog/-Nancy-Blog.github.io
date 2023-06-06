@@ -1,0 +1,13 @@
+#recent-posts1 {
+    background: #0998B8;
+    width: auto;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  #recent-posts1 canvas {
+    box-shadow: 0.2em 0.2em 2em #0008;
+    border: none;
+    outline: none;
+  }
