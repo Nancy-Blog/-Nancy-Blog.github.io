@@ -216,7 +216,7 @@ function showWelcome() {
   //判断时间
   let timeChange;
   let date = new Date();
-  if (date.getHours()>= 0 && date.getHours() < 5) timeChange = "<span>还不睡觉！</span>，狗命要紧！";
+  if (date.getHours()>= 0 && date.getHours() < 5) timeChange = "<span>还不睡觉！</span>狗命要紧！";
   else if (date.getHours()>= 5 && date.getHours() < 11) timeChange = "<span>早上好</span>，一日之计在于晨";
   else if (date.getHours()>= 11 && date.getHours() < 13) timeChange = "<span>中午好</span>，该摸鱼吃午饭了";
   else if (date.getHours() >= 13 && date.getHours() < 15) timeChange = "<span>下午好</span>，懒懒地睡个午觉吧！";
