@@ -171,7 +171,14 @@
     height: 1.28em;
     vertical-align: -0.15em;
     fill: currentColor;
-    overflow: hidden;
+    overflow: auto;
+  }
+  svg.social_icon {
+    width: 1.20em;
+    height: 1.20em;
+    vertical-align: -0.15em;
+    fill: currentColor;
+    overflow: auto;
   }
   
 /* 一级菜单居中 */
@@ -489,3 +496,4 @@ div .copyright{
 div .framework-info{
   color: #fff;
 }
+@import "//at.alicdn.com/t/c/font_4104458_h7vbnhdpuub.css";
