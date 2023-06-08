@@ -497,11 +497,11 @@ div .framework-info{
   color: #fff;
 }
 @import "//at.alicdn.com/t/c/font_4104458_h7vbnhdpuub.css";
-.twikooo{
+.tk-col{
 	background-image: url(https://www.ash-pro.top/photo/toux.gif);
-	background-size: contain;
+	background-size: 74.6px 74.6px;
 	background-repeat: no-repeat;
-	background-position: right;
+	background-position: right bottom;
 	background-color: rgba(255, 255, 255, 0);
 	resize: vertical
 }
