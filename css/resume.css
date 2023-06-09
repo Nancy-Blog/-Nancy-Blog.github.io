@@ -464,8 +464,9 @@ h2 {
     transform: rotate(20deg);
 }
 
+
 .author-card-game {
-    width: 49% !important;
+    width: 666px;
     margin-top: 1.5rem;
     /* padding: 1rem 2rem; */
     position: relative;
@@ -474,6 +475,7 @@ h2 {
 
 .video-background {
     object-fit: fill;
+    width: 666px;
     height: 100%;
     border-radius: 1rem;
 }
