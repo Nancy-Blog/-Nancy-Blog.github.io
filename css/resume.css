@@ -1,0 +1,567 @@
+#author-about {
+    display: flex !important;
+    padding-top: 1rem;
+    flex-direction: column;
+    align-items: center
+}
+
+
+/* 组信息 */
+#author-about .author-card-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%
+}
+
+#author-about .author-card-group:nth-child(odd) .author-card:nth-child(odd) {
+    width: calc(60% - 1rem)
+}
+
+#author-about .author-card-group:nth-child(odd) .author-card:nth-child(even) {
+    width: calc(40% - 1rem)
+}
+
+#author-about .author-card-group:nth-child(even) .author-card:nth-child(odd) {
+    width: calc(40% - 1rem)
+}
+
+#author-about .author-card-group:nth-child(even) .author-card:nth-child(even) {
+    width: calc(60% - 1rem)
+}
+
+/* 卡片内容信息 */
+.author-card {
+    color: var(--text-highlight-color);
+    position: relative;
+    background: var(--card-bg);
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+    border: var(--card-border);
+    margin-top: 1.5rem;
+    border: var(--card-border);
+    -webkit-box-shadow: var(--box-shadow);
+    -moz-box-shadow: var(--box-shadow);
+    -ms-box-shadow: var(--box-shadow);
+    -o-box-shadow: var(--box-shadow);
+    box-shadow: var(--box-shadow)
+}
+
+.author-card-desc {
+    font-size: 80%;
+    opacity: .8
+}
+
+.author-card-subtitle {
+    opacity: .8
+}
+
+.author-card-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-highlight-color)
+}
+
+/* 按钮 */
+@keyframes gradient {
+    0% {
+        background-position: 0 50%
+    }
+
+    50% {
+        background-position: 100% 50%
+    }
+
+    100% {
+        background-position: 0 50%
+    }
+}
+
+.author-card-btn {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    border-radius: 5em;
+    backdrop-filter: var(--backdrop-filter);
+    height: 2.5em;
+    background: rgba(255, 255, 255, .1);
+    padding: .5em .8em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -ms-transition: all .3s ease-in-out;
+    -o-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out
+}
+
+.author-card-btn * {
+    color: #fff;
+    margin: .2em
+}
+
+.author-card-btn:hover {
+    background: var(--main) !important;
+    -webkit-box-shadow: var(--box-shadow) !important;
+    -moz-box-shadow: var(--box-shadow) !important;
+    -ms-box-shadow: var(--box-shadow) !important;
+    -o-box-shadow: var(--box-shadow) !important;
+    box-shadow: var(--box-shadow) !important
+}
+
+.author-card-btn:hover * {
+    color: var(--second) !important
+}
+/* 头像 */
+#author-about .author-img {
+    margin: auto;
+    width: 180px;
+    height: 180px;
+    position: relative;
+}
+
+#author-about .author-img img {
+    border-radius: 50%;
+    background-image: linear-gradient(120deg, #fbc2eb 0%, #a6c1ee 100%);
+    background-size: 100%;
+    animation: gradient 15s ease infinite;
+}
+
+#author-about .author-img::before {
+    content: '';
+    -webkit-transition: 1s;
+    -moz-transition: 1s;
+    -o-transition: 1s;
+    -ms-transition: 1s;
+    transition: 1s;
+    width: 30px;
+    height: 30px;
+    background-image: linear-gradient(120deg, #fbc2eb 0%, #a6c1ee 100%);
+    position: absolute;
+    border-radius: 50%;
+    border: 5px solid #fff;
+    bottom: 5px;
+    right: 10px;
+    z-index: 2;
+}
+/* 标题 */
+#author-about .author-title {
+    color: #46e0a0;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 1rem;
+    line-height: 1
+}
+/* 作者信息卡片 */
+.author-card-info {
+    background: linear-gradient(120deg, #5b27ff 0, #00d4ff 100%);
+    background-size: 200%;
+    animation: gradient 15s ease infinite
+}
+
+.author-card-info div {
+    color: #fff !important
+}
+
+.author-card-info .author-card-btn {
+    background: rgba(57, 104, 255)
+}
+/* 作者性格卡片 */
+.author-card-personalities .author-card-img {
+    position: absolute;
+    right: -20px;
+    bottom: 10px;
+    width: 200px;
+    transition: all 2s;
+}
+
+.author-card-personalities:hover .author-card-img {
+    right: 195px;
+    transition: all 2s;
+}
+
+.author-card-personalities .author-card-subtitle {
+    color: #4298b4;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1
+}
+
+.author-card-personalities .author-card-btn {
+    background: rgba(66, 152, 180, .5)
+}
+/* 作者技能卡片 */
+.author-card.author-card-skills {
+    width: 100% !important;
+}
+
+@keyframes scrollToRight {
+    from {
+        -webkit-transform: translate3d(-50%, 0, 0);
+        -moz-transform: translate3d(-50%, 0, 0);
+        -ms-transform: translate3d(-50%, 0, 0);
+        -o-transform: translate3d(-50%, 0, 0);
+        transform: translate3d(-50%, 0, 0)
+    }
+
+    to {
+        -webkit-transform: translate3d(0, 0, 0);
+        -moz-transform: translate3d(0, 0, 0);
+        -ms-transform: translate3d(0, 0, 0);
+        -o-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0)
+    }
+}
+
+.skill-card-container {
+    position: relative;
+    overflow: hidden;
+    display: flex
+}
+
+.skill-card-wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    animation: scrollToRight 20s linear infinite;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -ms-transition: all .3s ease-in-out;
+    -o-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out
+}
+
+.skill-icon-pair {
+    margin-left: 1rem
+}
+
+.skill-icon-pair .skill-icon:nth-child(even) {
+    margin-top: 1rem;
+    -webkit-transform: translate(-60px);
+    -moz-transform: translate(-60px);
+    -ms-transform: translate(-60px);
+    -o-transform: translate(-60px);
+    transform: translate(-60px)
+}
+
+.skill-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    height: 120px;
+    border-radius: 2rem;
+    margin: .5rem 0;
+    background: #fff;
+    -webkit-box-shadow: var(--box-shadow);
+    -moz-box-shadow: var(--box-shadow);
+    -ms-box-shadow: var(--box-shadow);
+    -o-box-shadow: var(--box-shadow);
+    box-shadow: var(--box-shadow)
+}
+
+.skill-icon img {
+    width: 60%;
+    margin: auto !important
+}
+
+.skill-info-container {
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-wrap: wrap;
+    -webkit-transition: all .3s ease-in-out;
+    -moz-transition: all .3s ease-in-out;
+    -ms-transition: all .3s ease-in-out;
+    -o-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out
+}
+
+.skill-info-item {
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    margin-right: .5rem;
+    margin-bottom: .5rem;
+    color: var(--font-color);
+    background: var(--global-bg);
+    border-radius: 2rem;
+    padding: .25rem .5rem;
+    border: var(--card-border);
+    -webkit-box-shadow: var(--box-shadow);
+    -moz-box-shadow: var(--box-shadow);
+    -ms-box-shadow: var(--box-shadow);
+    -o-box-shadow: var(--box-shadow);
+    box-shadow: var(--box-shadow)
+}
+
+.skill-info-icon {
+    background: #fff;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center
+}
+
+.skill-info-name {
+    margin: 0 .5em
+}
+
+.skill-info-icon img {
+    width: 70%;
+    margin: auto !important;
+    border-radius: calc(var(--border-radius)/ 2) !important
+}
+
+.skill-card-container:hover .skill-card-wrapper {
+    opacity: 0;
+    pointer-events: none;
+    z-index: -100
+}
+
+.skill-card-container:hover .skill-info-container {
+    opacity: 1
+}
+
+.author-card-game {
+    width: 49% !important;
+    margin-top: 1.5rem;
+    /* padding: 1rem 2rem; */
+    position: relative;
+    
+}
+
+.video-background {
+    object-fit: fill;
+    height: 100%;
+    border-radius: 1rem;
+}
+
+.author-card-game .layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    /* width: 100%;
+    height: 100%; */
+    border-radius: 1rem;
+    /* rgba(19, 60, 154, .2) */
+    background: rgba(19, 60, 154, .2); 
+}
+
+.author-card-game .slogan {
+    position: absolute;
+    top: 60px;
+    left: 375px;
+    transform: translate(-50%, -50%);
+    width: 684px;
+    color: white;
+    text-align: left;
+}
+
+.slogan .subtitle {
+    font-size: 80%;
+    opacity: .8;
+    /* letter-spacing: 10px; */
+    
+}
+
+.slogan .title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-highlight-color)
+}
+/* 作者地址卡片 */
+.author-card-map {
+    width: 49% !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    margin-top: 1.5rem;
+
+}
+
+.author-card-map .author-card-address {
+    background: url(/img/map.jpg) no-repeat center;
+    min-height: 160px;
+    max-height: 400px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: .5rem;
+    width: 100%;
+    height: 60%;
+    background-size: 100%;
+    transition: 1s ease-in-out;
+
+    padding: 0;
+    border-radius: 1rem;
+}
+
+.author-card-address:hover {
+    background-size: 250%;
+    transition: 4s ease-in-out;
+    background-position-x: 50;
+    background-position-y: 70%;
+}
+
+.author-card-address .address-title {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: var(--anzhiyu-maskbg);
+    padding: .5rem 2rem;
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: 1s ease-in-out;
+    font-size: 20px
+}
+
+.author-card-address:hover .address-title {
+    bottom: -100%;
+}
+
+.author-card-address .address-title b {
+    color: #00d4ff;
+}
+
+/* 作者信息卡片 */
+.author-card-map .author-card-selfinfo {
+    display: flex;
+
+    min-height: 130px;
+    max-height: 400px;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    height: -webkit-fill-available;
+    height: 40%;
+    background: var(--card-bg);
+
+    border-radius: 1rem;
+}
+
+.author-card-selfinfo div {
+    display: flex;
+    flex-direction: column;
+    margin: 0.5rem 3rem 0.5rem 3rem;
+}
+
+.author-card-selfinfo .selfInfo-title {
+    opacity: 0.8;
+    font-size: 0.6rem;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+
+.author-card-selfinfo .selfInfo-content {
+    font-weight: 700;
+    font-size: 25px;
+    line-height: 1;
+}
+/* 座右铭卡片 */
+.author-card-maxim {
+    /* url(/img/mrfz.gif) no-repeat center */
+    background: var(--card-bg);
+    background-size: 200%;
+    animation: gradient 15s ease infinite
+}
+
+.author-card-maximtxt{
+    line-height: normal;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-highlight-color)
+}
+
+.author-card-source {
+    text-align: right;
+    font-size: 80%;
+    opacity: .8
+}
+/* 特长卡片 */
+.author-card-buff {
+    background: linear-gradient(120deg, #ff27e8 0, #ff8000 100%);
+    background-size: 200%;
+    animation: gradient 15s ease infinite;
+
+    overflow: hidden;
+}
+
+h2 {
+    margin-right: auto;
+    font-size: 36px;
+    font-family: Helvetica;
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    color: var(--font-color);
+    margin-top: 0;
+}
+
+.mask {
+    height: 36px;
+    width: 175px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 4px;
+    float: left;
+}
+
+.mask span {
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+    top: 38px;
+    padding-bottom: var(--offset);
+    background-size: 100% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(45deg, #fff 50%, #fff);
+}
+
+.mask span[data-show] {
+    transform: translateY(-100%);
+    transition: 0.5s transform ease-in-out;
+}
+
+.mask span[data-up] {
+    transform: translateY(-200%);
+    transition: 0.5s transform ease-in-out;
+}
+
+.mask span:nth-child(1) {
+    background-image: linear-gradient(45deg, #0ecffe 50%, #07a6f1);
+}
+
+.mask span:nth-child(2) {
+    background-image: linear-gradient(45deg, #18e198 50%, #0ec15d);
+}
+
+.mask span:nth-child(3) {
+    background-image: linear-gradient(45deg, #8a7cfb 50%, #633e9c);
+}
+
+.mask span:nth-child(4) {
+    background-image: linear-gradient(45deg, #dc58fa 50%, #fe00e0);
+}
+
+.author-card-icon {
+    font-size: 12rem;
+    opacity: 0.3;
+    position: absolute;
+    right: 40px;
+    bottom: -90%;
+    /* transform: rotate(30deg); */
+    transition: 2s ease-in-out;
+}
+
+.author-card-buff:hover .author-card-icon {
+    transform: rotate(20deg);
+}
