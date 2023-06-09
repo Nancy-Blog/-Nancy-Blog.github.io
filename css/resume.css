@@ -463,3 +463,51 @@ h2 {
 .author-card-buff:hover .author-card-icon {
     transform: rotate(20deg);
 }
+
+.author-card-game {
+    width: 49% !important;
+    margin-top: 1.5rem;
+    /* padding: 1rem 2rem; */
+    position: relative;
+    
+}
+
+.video-background {
+    object-fit: fill;
+    height: 100%;
+    border-radius: 1rem;
+}
+
+.author-card-game .layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    /* width: 100%;
+    height: 100%; */
+    border-radius: 1rem;
+    /* rgba(19, 60, 154, .2) */
+    background: rgba(19, 60, 154, .2); 
+}
+
+.author-card-game .slogan {
+    position: absolute;
+    top: 60px;
+    left: 375px;
+    transform: translate(-50%, -50%);
+    width: 684px;
+    color: white;
+    text-align: left;
+}
+
+.slogan .subtitle {
+    font-size: 80%;
+    opacity: .8;
+    /* letter-spacing: 10px; */
+    
+}
+
+.slogan .title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-highlight-color)
+}
