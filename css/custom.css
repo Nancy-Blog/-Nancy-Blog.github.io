@@ -277,7 +277,7 @@
 
 /* 个人信息卡片背景图 */
 [data-theme="light"] #aside-content > .card-widget.card-info {
-  background-image: url(https://www.ash-pro.top/photo/info-bg2.jpg);
+  background-image: url(https://blog.tktk2.ml/photo/info-bg2.jpg);
   background-repeat: no-repeat;
   background-attachment: inherit;
   background-size: 100%;
@@ -498,7 +498,7 @@ div .framework-info{
 }
 @import "//at.alicdn.com/t/c/font_4104458_h7vbnhdpuub.css";
 .tk-col{
-	background-image: url(https://www.ash-pro.top/photo/qmy.gif);
+	background-image: url(https://blog.tktk2.ml/photo/qmy.gif);
 	background-size: 74.6px 74.6px;
 	background-repeat: no-repeat;
 	background-position: right bottom;
